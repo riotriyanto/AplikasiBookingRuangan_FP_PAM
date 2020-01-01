@@ -32,9 +32,13 @@ public class MainActivity extends AppCompatActivity {
 
         id = getIntent().getStringExtra(TAG_ID);
         username = getIntent().getStringExtra(TAG_USERNAME);
-
-        txt_id.setText("ID : " + id);
-        txt_username.setText("USERNAME : " + username);
+        final Session session = new Session();
+        txt_id.setText("ID : " + session.getRegisteredPass(getBaseContext()));
+        txt_username.setText("USERNAME : " + session.getRegisteredUser(getBaseContext()));
+        if (session.getLoggedInStatus(getBaseContext()) == false){
+            Intent intent = new Intent(MainActivity.this, Login.class);
+            startActivity(intent);
+        }
 
         btn_logout.setOnClickListener(new View.OnClickListener() {
 
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString(TAG_ID, null);
                 editor.putString(TAG_USERNAME, null);
                 editor.commit();
-
+                session.clearLoggedInUser(getBaseContext());
                 Intent intent = new Intent(MainActivity.this, Login.class);
                 startActivity(intent);
             }

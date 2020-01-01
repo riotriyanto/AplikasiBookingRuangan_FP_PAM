@@ -154,13 +154,12 @@ public class Login extends AppCompatActivity {
                         try {
 //                            da = response.getJSONObject("data");
                             mess = response.getJSONArray("data");
-                            textView.append(mess.getJSONObject(0).getString("id_user"));
+//                            textView.append(mess.getJSONObject(0).getString("id_user"));
                             // menyimpan login ke session
-                            SharedPreferences.Editor editor = sharedpreferences.edit();
-                            editor.putBoolean(session_status, true);
-                            editor.putString(TAG_ID, "iki id ne");
-                            editor.putString(TAG_USERNAME, "username e bro");
-                            editor.commit();
+                            Session session = new Session();
+                            session.setRegisteredPass(getBaseContext(), mess.getJSONObject(0).getString("id_user"));
+                            session.setRegisteredUser(getBaseContext(), mess.getJSONObject(0).getString("username"));
+                            session.setLoggedInStatus(getBaseContext(), true);
                             res = response.getBoolean("success");
                         } catch (JSONException e) {
                             e.printStackTrace();
