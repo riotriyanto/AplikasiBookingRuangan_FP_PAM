@@ -91,8 +91,8 @@ mItem = new ArrayList<>();
 
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, Booking.class);
-//                startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, Booking.class);
+                startActivity(intent);
             }
         });
 
