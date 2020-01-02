@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager mManager;
     List<ModelData> mItem;
     ProgressDialog pd;
-    Button btn_logout;
+    Button btn_logout, tambah;
     TextView txt_id, txt_username;
     String id, username;
     SharedPreferences sharedpreferences;
@@ -52,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        txt_id = (TextView) findViewById(R.id.txt_id);
         txt_username = (TextView) findViewById(R.id.txt_username);
         btn_logout = (Button) findViewById(R.id.btn_logout);
+        tambah = (Button) findViewById(R.id.tambah);
 mItem = new ArrayList<>();
 
 
@@ -64,7 +64,6 @@ mItem = new ArrayList<>();
         id = getIntent().getStringExtra(TAG_ID);
         username = getIntent().getStringExtra(TAG_USERNAME);
         final Session session = new Session();
-        txt_id.setText("ID : " + session.getRegisteredPass(getBaseContext()));
         txt_username.setText("USERNAME : " + session.getRegisteredUser(getBaseContext()));
         if (session.getLoggedInStatus(getBaseContext()) == false){
             Intent intent = new Intent(MainActivity.this, Login.class);
@@ -88,6 +87,15 @@ mItem = new ArrayList<>();
             }
         });
 
+        tambah.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, Booking.class);
+//                startActivity(intent);
+            }
+        });
+
         LoadJson();
 //        pd = new ProgressDialog(this);
         mRecyclerview = (RecyclerView) findViewById(R.id.viewe);
@@ -106,7 +114,7 @@ mItem = new ArrayList<>();
 //        pd.setCancelable(false);
 //        pd.show();
         final Session session = new Session();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Server.URL+"booking?id_user="+session.getRegisteredPass(getBaseContext()), null,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Server.URL+"book?id_user="+session.getRegisteredPass(getBaseContext()), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -124,6 +132,7 @@ mItem = new ArrayList<>();
                                 JSONObject data = mess.getJSONObject(i);
                                 ModelData md = new ModelData();
                                 md.setRuangan(data.getString("urai_ruangan"));
+                                md.setId(data.getString("id_booking"));
                                 Log.d("p","pes"+data.getString("urai_ruangan"));
                                mItem.add(md);
                             } catch (JSONException e) {
