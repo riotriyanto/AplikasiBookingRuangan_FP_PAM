@@ -1,17 +1,45 @@
 package com.example.aplikasibookingruangan_fp_pam;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.aplikasibookingruangan_fp_pam.Adapter.AdapterData;
+import com.example.aplikasibookingruangan_fp_pam.Model.ModelData;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    RecyclerView mRecyclerview;
+    RecyclerView.Adapter mAdapter;
+    RecyclerView.LayoutManager mManager;
+    List<ModelData> mItem;
+    ProgressDialog pd;
     Button btn_logout;
     TextView txt_id, txt_username;
     String id, username;
@@ -27,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         txt_id = (TextView) findViewById(R.id.txt_id);
         txt_username = (TextView) findViewById(R.id.txt_username);
         btn_logout = (Button) findViewById(R.id.btn_logout);
+mItem = new ArrayList<>();
+
+
 
         sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
 
@@ -56,5 +87,58 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        LoadJson();
+//        pd = new ProgressDialog(this);
+        mRecyclerview = (RecyclerView) findViewById(R.id.viewe);
+        mAdapter = new AdapterData(MainActivity.this, mItem);
+//
+        mManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL,false);
+        mRecyclerview.setLayoutManager(mManager);
+//
+//
+       mRecyclerview.setAdapter(mAdapter);
+
+
+    }
+    private void LoadJson(){
+//        pd.setMessage("Mengambil Data");
+//        pd.setCancelable(false);
+//        pd.show();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Server.URL+"booking", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+//                        pd.cancel();
+                        Log.d("volley", "response" + response.toString());
+                        JSONArray mess = null;
+                        try {
+                            mess = response.getJSONArray("data");
+                            Log.d("voley","mes"+mess.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        for (int i=0; i < mess.length(); i++){
+                            try {
+                                JSONObject data = mess.getJSONObject(i);
+                                ModelData md = new ModelData();
+                                md.setRuangan(data.getString("urai_ruangan"));
+                                Log.d("p","pes"+data.getString("urai_ruangan"));
+                               mItem.add(md);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                pd.cancel();
+                Log.d("voley", "error"+error.getMessage());
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(jsonObjectRequest);
     }
 }
