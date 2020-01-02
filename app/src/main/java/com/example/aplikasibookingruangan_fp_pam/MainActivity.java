@@ -105,7 +105,8 @@ mItem = new ArrayList<>();
 //        pd.setMessage("Mengambil Data");
 //        pd.setCancelable(false);
 //        pd.show();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Server.URL+"booking", null,
+        final Session session = new Session();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Server.URL+"booking?id_user="+session.getRegisteredPass(getBaseContext()), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
